@@ -59,10 +59,15 @@ def print_ssids():
 	rows, columns = os.popen('stty size', 'r').read().split()
 	rows, columns = int(rows),int(columns)
 	
+	if True:
+		cur_ssids = sorted(ssids,key=lambda k: k["lastseen"], reverse=True)
+	else:
+		cur_ssids = ssids
+	
 	# move cursor to 1,1
 	sys.stdout.write('\033[H')
 	for cnt in range(rows-1):
-		age = time.time()-ssids[cnt]["lastseen"]
+		age = time.time()-cur_ssids[cnt]["lastseen"]
 		# color code age of SSIDs
 		if age > 120:
 			agecol = tcolors.B
@@ -72,7 +77,7 @@ def print_ssids():
 			agecol = tcolors.G
 		else:
 			agecol = tcolors.W
-		name = ssids[cnt]["name"]
+		name = cur_ssids[cnt]["name"]
 		# limit to width -6 (** name **)
 		if len(name) > columns-6:
 			name = name[0:columns-1-6]
