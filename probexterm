@@ -1,0 +1,2 @@
+#!/bin/bash
+xterm -fa monospace -fs 32 -geom 39x11+0+0 -fg white -bg black -cr orange -e python /tmp/probereq.py &
