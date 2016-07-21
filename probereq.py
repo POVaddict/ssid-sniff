@@ -9,7 +9,9 @@ import os
 import sys
 import time
 
-maxssid = 10
+maxssid = 100
+rows = 20
+columns = 80
 ssids = []
 
 # terminal colors
@@ -54,9 +56,12 @@ def findoldest():
 	return ret
 
 def print_ssids():
+	rows, columns = os.popen('stty size', 'r').read().split()
+	rows, columns = int(rows),int(columns)
+	
 	# move cursor to 1,1
 	sys.stdout.write('\033[H')
-	for cnt in range(maxssid):
+	for cnt in range(rows-1):
 		age = time.time()-ssids[cnt]["lastseen"]
 		# color code age of SSIDs
 		if age > 120:
@@ -68,11 +73,11 @@ def print_ssids():
 		else:
 			agecol = tcolors.W
 		name = ssids[cnt]["name"]
-		# limit to 32 chars
-		if len(name) > 32:
-			name = name[0:31]
-		# pad to 32 chars, centered
-		name = name.center(32)
+		# limit to width -6 (** name **)
+		if len(name) > columns-6:
+			name = name[0:columns-1-6]
+		# pad to columns chars, centered
+		name = name.center(columns - 6)
 		print agecol+'** '+name+' **'+tcolors.N
 
 FNULL = open(os.devnull, 'w')
