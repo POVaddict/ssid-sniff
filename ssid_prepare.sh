@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 cp /usr/sbin/tcpdump /tmp/
 setcap cap_net_raw,cap_net_admin=eip /tmp/tcpdump
