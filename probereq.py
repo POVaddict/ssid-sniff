@@ -28,6 +28,19 @@ for cnt in range(maxssid):
 	ssids[cnt]["name"] = ""
 	ssids[cnt]["lastseen"] = 0
 
+# SSID blacklist (sort out local SSIDs)
+blacklist = []
+blacklist.append("C3D2")
+blacklist.append("C3D2.anybert")
+
+def is_blacklisted(name):
+	cnt = 0
+	while cnt < len(blacklist):
+		if blacklist[cnt] == name:
+			return 1
+		cnt += 1
+	return 0
+
 def findfree():
 	cnt = 0
 	while cnt < maxssid:
@@ -96,6 +109,9 @@ while True:
 		res = ssid_re.match(line)
 		if res:
 			#print "SSID:", res.group(1), "seen:", time.time()
+			# skip blacklisted SSIDs
+			if is_blacklisted(res.group(1)) == 1:
+				continue
 			ind = findssid(res.group(1))
 			if ind == -1:
 				# new SSID, find free slot
