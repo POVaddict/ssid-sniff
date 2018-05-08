@@ -20,6 +20,10 @@ blacklist = []
 blacklist.append("C3D2")
 blacklist.append("C3D2.anybert")
 
+class preqest:
+	ssid = ""
+	lastseen = 0
+
 def is_blacklisted(name):
 	cnt = 0
 	while cnt < len(blacklist):
@@ -35,16 +39,36 @@ def color_hash(s):
 	h = h & 0x00ffffff
 	return h
 
-def have_seen(hssid):
+def have_seen(hssid, now):
 	for mac in stations:
-		if hssid in stations[mac]:
-			return True
+		for req in stations[mac]:
+			if hssid == req.ssid:
+				# update lastseen time
+				req.lastseen = now
+				return True
 	return False
 
-def cleanup_ssids():
-	for mac in stations:
-		stations[mac].clear()
-	stations.clear()
+def delete_old():
+	repeat = 1
+	while repeat > 0:
+		count = 0
+		oldest = time.time()
+		for mac in stations:
+			for req in stations[mac]:
+				count = count + 1
+				if req.lastseen < oldest:
+					oldest = req.lastseen
+					dmac = mac
+					dreq = req
+		# remove request from station
+		stations[dmac].remove(dreq)
+		count = count - 1
+		print "del [", dmac, "/", dreq.ssid, "]"
+		# remove station if empty
+		if len(stations[dmac]) == 0:
+			del stations[dmac]
+		if count <= ssid_limit:
+			repeat = 0
 
 def write_dot():
 	ssids_cnt = 0
@@ -71,8 +95,8 @@ def write_dot():
 		else:
 			fontcol = "black"
 		idcnt = 0
-		for ssid in stations[mac]:
-			ssidline = cpref + "_" + str(idcnt) + " [fontcolor=\"" + fontcol + "\"; label=\"" + ssid + "\"];"
+		for req in stations[mac]:
+			ssidline = cpref + "_" + str(idcnt) + " [fontcolor=\"" + fontcol + "\"; label=\"" + req.ssid + "\"];"
 			print >>f, ssidline
 			idcnt = idcnt + 1
 			ssids_cnt = ssids_cnt + 1
@@ -91,11 +115,14 @@ proc = subprocess.Popen(['/tmp/tcpdump', '-leni', 'wlan0', 'type', 'mgt', 'subty
 #proc = subprocess.Popen(['/bin/cat', '/tmp/ssid_probereq.log'], stdout=subprocess.PIPE, stderr=FNULL)
 
 # initial graph
+req = preqest()
+req.ssid = "please wait..."
+req.lastseen = 0
 stations["init"] = set()
-stations["init"].add("please wait...")
+stations["init"].add(req)
 write_dot()
 render_dot()
-stations["init"].remove("please wait...")
+stations["init"].remove(req)
 del stations["init"]
 #time.sleep(10)
 
@@ -113,12 +140,12 @@ while True:
 			pssid = res.group(2)
 			# remove any double quote chars
 			pssid = pssid.translate(None, '"')
-			print "MAC:", pmac, "SSID:", pssid, "time:", now
+			#print "MAC:", pmac, "SSID:", pssid, "time:", now
 			# skip blacklisted SSIDs
 			if is_blacklisted(pssid) == 1:
 				continue
 			# check if SSID was already seen
-			if have_seen(pssid):
+			if have_seen(pssid, now):
 				continue
 			# new station
 			if not pmac in stations:
@@ -126,15 +153,19 @@ while True:
 			# check if SSID was already seen for this station
 			#if pssid in stations[pmac]:
 			#	continue
-			stations[pmac].add(pssid)
+			req = preqest()
+			req.ssid = pssid
+			req.lastseen = now
+			stations[pmac].add(req)
+			print "add [", pmac, "/", pssid, "]"
 			# rate limit
-			if (now - last) >= 5:
+			if (now - last) >= 2:
 				last = now
 				total_ssids = write_dot()
 				render_dot()
 				if total_ssids > ssid_limit:
-					# limit reached, cleanup all SSIDs
-					cleanup_ssids()
+					# limit reached, delete old requests
+					delete_old()
 	else:
 		break
 
