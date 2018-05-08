@@ -18,7 +18,6 @@ stations = {}
 # SSID blacklist (sort out local SSIDs)
 blacklist = []
 blacklist.append("C3D2")
-blacklist.append("C3D2.anybert")
 
 class preqest:
 	ssid = ""
