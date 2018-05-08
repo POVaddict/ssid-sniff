@@ -111,7 +111,7 @@ def render_dot():
 
 FNULL = open(os.devnull, 'w')
 proc = subprocess.Popen(['/tmp/tcpdump', '-leni', 'wlan0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
-#proc = subprocess.Popen(['/bin/cat', '/tmp/ssid_probereq.log'], stdout=subprocess.PIPE, stderr=FNULL)
+#proc = subprocess.Popen(['/tmp/fakedump.sh'], stdout=subprocess.PIPE, stderr=FNULL)
 
 # initial graph
 req = preqest()
