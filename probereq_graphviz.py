@@ -107,7 +107,7 @@ def write_dot():
 
 def render_dot():
 	subprocess.call(["fdp", "-Tpdf", "-o/tmp/ssids.pdf", "/tmp/ssids.dot"])
-	#subprocess.call(["aplay", "/usr/share/sounds/arpeg64.wav"])
+	#subprocess.call(["aplay", "-q", "/usr/share/sounds/arpeg64.wav"])
 
 FNULL = open(os.devnull, 'w')
 proc = subprocess.Popen(['/tmp/tcpdump', '-leni', 'wlan0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
