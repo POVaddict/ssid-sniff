@@ -17,7 +17,7 @@ stations = {}
 
 # SSID blacklist (sort out local SSIDs)
 blacklist = []
-blacklist.append("C3D2")
+blacklist.append("FRITZ!Box")
 
 class preqest:
 	ssid = ""
@@ -26,7 +26,7 @@ class preqest:
 def is_blacklisted(name):
 	cnt = 0
 	while cnt < len(blacklist):
-		if blacklist[cnt] == name:
+		if blacklist[cnt] in name:
 			return 1
 		cnt += 1
 	return 0
