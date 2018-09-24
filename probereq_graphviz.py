@@ -75,6 +75,8 @@ def write_dot():
 	print >>f, "digraph ssids {"
 	print >>f, "margin=\"0\";"
 	print >>f, "bgcolor=\"#333333\";"
+	# aspect ratio for 1920x1080 (1080/1920)
+	print >>f, "ratio=\"0.5625\";"
 	print >>f, "node [ shape=none ];"
 	scnt = 0
 	for mac in stations:
