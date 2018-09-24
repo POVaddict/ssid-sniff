@@ -69,7 +69,18 @@ def delete_old():
 		if count <= ssid_limit:
 			repeat = 0
 
+def find_newest():
+	newest = 0
+	nmac = ""
+	for mac in stations:
+		for req in stations[mac]:
+			if req.lastseen > newest:
+				newest = req.lastseen
+				nmac = mac
+	return nmac
+
 def write_dot():
+	newmac = find_newest()
 	ssids_cnt = 0
 	f = open("/tmp/ssids.dot", 'w')
 	print >>f, "digraph ssids {"
@@ -82,7 +93,11 @@ def write_dot():
 	for mac in stations:
 		hashcol = color_hash(mac)
 		col = "#%0.6X" % hashcol
-		fillcol = "style=\"rounded,filled\"; color=\"black\"; fillcolor=\"" + col + "\";"
+		# mark subgraph containing newest SSID with white dashed line
+		if mac == newmac:
+			fillcol = "style=\"rounded,filled,dashed,bold\"; color=\"white\"; fillcolor=\"" + col + "\";"
+		else:
+			fillcol = "style=\"rounded,filled\"; color=\"black\"; fillcolor=\"" + col + "\";"
 		cpref = "c"+str(scnt)
 		clustername = "cluster_" + cpref
 		print >>f, fillcol
