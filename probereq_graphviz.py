@@ -154,8 +154,9 @@ while True:
 			now = time.time()
 			pmac = res.group(1)
 			pssid = res.group(2)
-			# remove any double quote chars
+			# remove any double quote and backslash chars
 			pssid = pssid.translate(None, '"')
+			pssid = pssid.translate(None, '\\')
 			#print "MAC:", pmac, "SSID:", pssid, "time:", now
 			# skip blacklisted SSIDs
 			if is_blacklisted(pssid) == 1:
