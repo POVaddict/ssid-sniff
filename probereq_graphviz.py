@@ -17,7 +17,7 @@ stations = {}
 
 # SSID blacklist (sort out local SSIDs)
 blacklist = []
-blacklist.append("FRITZ!Box")
+blacklist.append("M-^")
 
 class preqest:
 	ssid = ""
