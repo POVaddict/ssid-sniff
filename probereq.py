@@ -1,7 +1,5 @@
 #!/usr/bin/python
-# prepare wlan interface:
-# iwconfig wlan0 mode monitor
-# ip link set wlan0 up
+# run "ssid_prepare.sh" before using this script
 
 import subprocess
 import re
@@ -99,7 +97,7 @@ def print_ssids():
 		print agecol+'** '+name+' **'+tcolors.N
 
 FNULL = open(os.devnull, 'w')
-proc = subprocess.Popen(['/tmp/tcpdump', '-lni', 'wlan0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
+proc = subprocess.Popen(['/tmp/tcpdump', '-plni', 'mon0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
 
 while True:
 	ssid_re = re.compile("^.*Probe Request \((.+)\).*$")

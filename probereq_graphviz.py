@@ -1,7 +1,5 @@
 #!/usr/bin/python
-# prepare wlan interface:
-# iwconfig wlan0 mode monitor
-# ip link set wlan0 up
+# run "ssid_prepare.sh" before using this script
 
 import subprocess
 import re
@@ -127,7 +125,7 @@ def render_dot():
 	#subprocess.call(["aplay", "-q", "/usr/share/sounds/arpeg64.wav"])
 
 FNULL = open(os.devnull, 'w')
-proc = subprocess.Popen(['/tmp/tcpdump', '-leni', 'wlan0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
+proc = subprocess.Popen(['/tmp/tcpdump', '-pleni', 'mon0', 'type', 'mgt', 'subtype', 'probe-req'], stdout=subprocess.PIPE, stderr=FNULL)
 #proc = subprocess.Popen(['/tmp/fakedump.sh'], stdout=subprocess.PIPE, stderr=FNULL)
 
 # initial graph
